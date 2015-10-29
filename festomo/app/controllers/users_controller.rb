@@ -1,9 +1,9 @@
 class UsersController < ApplicationController
+  before_action :set_user, only: [:show, :edit, :update, :destroy]
   
   def show
-    @user=User.find(params[:id])
+    @microposts = @user.microposts
   end
-  
   
   def new
     @user=User.new
@@ -18,12 +18,32 @@ class UsersController < ApplicationController
       render 'new'
     end
   end
+  
+  def edit
+  end
+  
+  def update
+    if @user.update(user_params)
+      flash[:success] = "ユーザー情報が更新されました"
+      redirect_to @user
+    else
+      render :edit
+    end
+    
+  end  
 
   private
+  
+  def set_user
+      @user = User.find(params[:id])
+  end
 
   def user_params
     params.require(:user).permit(:name, :email, :password,
                                  :password_confirmation)
   end
   
+  def user_edit_params
+    params.require(:user).permit(:name, :email)
+  end
 end
